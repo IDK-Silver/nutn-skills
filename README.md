@@ -55,12 +55,8 @@ claude mcp add anthropic-claude-in-chrome -- npx -y anthropic-claude-in-chrome
   {
     "mcpServers": {
       "github": {
-        "command": "docker",
-        "args": [
-          "run", "-i", "--rm",
-          "-e", "GITHUB_PERSONAL_ACCESS_TOKEN",
-          "ghcr.io/github/github-mcp-server"
-        ],
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-github"],
         "env": {
           "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_token>"
         }
