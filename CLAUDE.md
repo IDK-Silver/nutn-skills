@@ -14,7 +14,7 @@
 
 每次對話開始時：
 
-1. 閱讀技能索引：`/Users/yufeng/Documents/Repo/nutn-skills/INDEX.md`
+1. 閱讀技能索引：`./INDEX.md`
 2. 比對使用者請求與技能觸發關鍵字
 3. 若符合，執行前先閱讀對應的 SKILL.md
 4. 精確遵循技能指令
