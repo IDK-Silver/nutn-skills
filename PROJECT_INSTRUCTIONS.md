@@ -4,11 +4,39 @@
 
 ## 前置作業（Claude Desktop 專用）
 
-首次使用前，請先 clone 技能庫：
+**每次對話開始時，依序執行以下步驟：**
+
+### 步驟 1：檢查技能庫是否存在
+
+使用 `bash_tool` 在 Claude sandbox 中檢查：
+
+```bash
+ls ~/nutn-skills/INDEX.md
+```
+
+### 步驟 2：取得技能庫
+
+**若步驟 1 成功（檔案存在）：** 跳至步驟 3
+
+**若步驟 1 失敗（檔案不存在）：** 嘗試 clone
 
 ```bash
 git clone https://github.com/IDK-Silver/nutn-skills.git ~/nutn-skills
 ```
+
+**若 git clone 失敗（網路限制）：** 使用 GitHub MCP 作為 fallback
+
+```
+使用 github:get_file_contents 讀取所需檔案
+owner: IDK-Silver
+repo: nutn-skills
+```
+
+### 步驟 3：載入技能索引
+
+讀取 `~/nutn-skills/INDEX.md`（或透過 GitHub MCP 讀取）
+
+**重要：不可跳過此步驟直接回應使用者**
 
 ## 適用範圍
 
@@ -20,12 +48,11 @@ git clone https://github.com/IDK-Silver/nutn-skills.git ~/nutn-skills
 
 ## 自訂技能
 
-每次對話開始時：
+完成前置作業後：
 
-1. 閱讀技能索引：`~/nutn-skills/INDEX.md`
-2. 比對使用者請求與技能觸發關鍵字
-3. 若符合，執行前先閱讀對應的 SKILL.md
-4. 精確遵循技能指令
+1. 比對使用者請求與技能觸發關鍵字
+2. 若符合，執行前先閱讀對應的 SKILL.md
+3. 精確遵循技能指令
 
 **重要事項：**
 - 不可跳過技能載入步驟
