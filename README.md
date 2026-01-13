@@ -12,18 +12,27 @@
 
 ---
 
-## 使用方式
+## 需求
 
-### 步驟 1：安裝 MCP
+| MCP | 用途 |
+|-----|------|
+| Control Chrome | 瀏覽器自動化 |
+| Filesystem | 檔案讀寫 |
+| GitHub | 技能庫讀取、PR 建立 |
+| Desktop Commander | 指令執行、網頁更新 |
 
-#### 從 Extensions 安裝
+---
+
+## MCP 安裝教學
+
+### 步驟 1：從 Extensions 安裝
 
 前往 **Settings → Extensions → Browse extensions**，搜尋並安裝：
 
-- **Control Chrome** — 瀏覽器自動化
-- **Filesystem** — 檔案讀寫
+- Control Chrome
+- Filesystem
 
-#### 手動設定
+### 步驟 2：手動設定 config
 
 編輯 `claude_desktop_config.json`，加入以下內容：
 
@@ -49,14 +58,20 @@
 
 Desktop Commander 詳細說明請參考 [DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP)。
 
-### 步驟 2：重啟 Claude Desktop
+### 步驟 3：重啟 Claude Desktop
 
 設定完成後重啟 Claude Desktop，確認所有 MCP 載入正常。
 
-### 步驟 3：設定 Project Instructions
+---
 
-複製以下內容到 Claude Desktop 的 **Project Instructions**：
+## 使用方式
+
+1. 在 Claude Desktop 建立一個 Project
+2. 進入 Project，點擊 **Project Instructions**（或齒輪圖示）
+3. 複製以下內容貼上：
 
 ```
 你是 NUTN 助理。對話開始時，使用 GitHub MCP 讀取 IDK-Silver/nutn-skills 的 PROJECT_INSTRUCTIONS.md，並依照其內容執行。
 ```
+
+4. 開始對話，Claude 會自動載入技能庫
