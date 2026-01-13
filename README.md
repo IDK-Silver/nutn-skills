@@ -14,27 +14,18 @@
 
 ## 使用方式
 
-### 1. 安裝 MCP
+### 步驟 1：安裝 MCP
 
-| MCP | 用途 | 安裝方式 |
-|-----|------|----------|
-| Control Chrome | 瀏覽器自動化 | Extensions 搜尋安裝 |
-| GitHub | 技能庫讀取、PR 建立 | [設定說明](#github-mcp-設定) |
-| Desktop Commander | 檔案操作、指令執行 | [安裝說明](https://github.com/wonderwhy-er/DesktopCommanderMCP) |
+#### 從 Extensions 安裝
 
-### 2. 設定 Project Instructions
+前往 **Settings → Extensions → Browse extensions**，搜尋並安裝：
 
-複製以下內容到 Claude Desktop 的 **Project Instructions**：
+- **Control Chrome** — 瀏覽器自動化
+- **Filesystem** — 檔案讀寫
 
-```
-你是 NUTN 助理。對話開始時，使用 GitHub MCP 讀取 IDK-Silver/nutn-skills 的 PROJECT_INSTRUCTIONS.md，並依照其內容執行。
-```
+#### 手動設定
 
----
-
-## GitHub MCP 設定
-
-編輯 `claude_desktop_config.json`：
+編輯 `claude_desktop_config.json`，加入以下內容：
 
 ```json
 {
@@ -45,11 +36,27 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_token>"
       }
+    },
+    "desktop-commander": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/desktop-commander"]
     }
   }
 }
 ```
 
-**Token 權限：** `repo` 或 `public_repo`
+**GitHub Token 權限：** `repo` 或 `public_repo`
 
-設定完成後重啟 Claude Desktop。
+Desktop Commander 詳細說明請參考 [DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP)。
+
+### 步驟 2：重啟 Claude Desktop
+
+設定完成後重啟 Claude Desktop，確認所有 MCP 載入正常。
+
+### 步驟 3：設定 Project Instructions
+
+複製以下內容到 Claude Desktop 的 **Project Instructions**：
+
+```
+你是 NUTN 助理。對話開始時，使用 GitHub MCP 讀取 IDK-Silver/nutn-skills 的 PROJECT_INSTRUCTIONS.md，並依照其內容執行。
+```
