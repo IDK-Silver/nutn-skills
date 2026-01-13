@@ -12,67 +12,44 @@
 
 ---
 
-## Claude Code 使用方式
+## 使用方式
 
-### 需求
+### 1. 安裝 MCP
 
-- 電腦需安裝 git
+| MCP | 用途 | 安裝方式 |
+|-----|------|----------|
+| Control Chrome | 瀏覽器自動化 | Extensions 搜尋安裝 |
+| GitHub | 技能庫讀取、PR 建立 | [設定說明](#github-mcp-設定) |
+| Desktop Commander | 檔案操作、指令執行 | [安裝說明](https://github.com/wonderwhy-er/DesktopCommanderMCP) |
 
-### MCP 安裝
+### 2. 設定 Project Instructions
 
-安裝 **Control Chrome** MCP：
+複製以下內容到 Claude Desktop 的 **Project Instructions**：
 
-```bash
-claude mcp add anthropic-claude-in-chrome -- npx -y anthropic-claude-in-chrome
 ```
-
-### 使用方式
-
-直接在專案目錄使用，會自動讀取 `CLAUDE.md`。
+你是 NUTN 助理。對話開始時，使用 GitHub MCP 讀取 IDK-Silver/nutn-skills 的 PROJECT_INSTRUCTIONS.md，並依照其內容執行。
+```
 
 ---
 
-## Claude Desktop 使用方式
+## GitHub MCP 設定
 
-### 需求
+編輯 `claude_desktop_config.json`：
 
-- Control Chrome MCP
-- Filesystem MCP
-- GitHub MCP
-
-### MCP 安裝
-
-前往 **Settings → Extensions → Browse extensions** 搜尋並安裝：
-
-- **Control Chrome**
-- **Filesystem**
-
-* **GitHub MCP Server** 需手動設定 `claude_desktop_config.json`：
-	**Token 權限需求：**
-  - `repo`（完整控制）- 建立 PR 所需
-  - 或 `public_repo` - 僅對公開 repo
-  ```json
-  {
-    "mcpServers": {
-      "github": {
-        "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-github"],
-        "env": {
-          "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_token>"
-        }
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_token>"
       }
     }
   }
-  ```
+}
+```
 
+**Token 權限：** `repo` 或 `public_repo`
 
 設定完成後重啟 Claude Desktop。
-
-### 使用方式
-
-1. 將 `PROJECT_INSTRUCTIONS.md` 的內容複製到 Claude Desktop 的 Project Instructions
-
-2. Claude 會在對話開始時自動執行：
-   ```bash
-   git clone https://github.com/IDK-Silver/nutn-skills.git ~/nutn-skills
-   ```
