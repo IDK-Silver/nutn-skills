@@ -9,14 +9,40 @@ npm install -g agent-browser
 agent-browser install  # 下載 Chromium
 ```
 
+---
+
+## 執行環境
+
+**重要**：agent-browser 透過 nvm 安裝，必須使用 Desktop Commander 的 `start_process` 搭配 zsh shell 來載入環境：
+
+```
+Desktop Commander:start_process
+  command: source ~/.zshrc 2>/dev/null; agent-browser open https://example.com --headed
+  shell: /bin/zsh
+  timeout_ms: 15000
+```
+
+**所有 agent-browser 命令都必須：**
+1. 加上 `source ~/.zshrc 2>/dev/null;` 前綴
+2. 指定 `shell: /bin/zsh`
+
+**錯誤寫法**（會找不到 agent-browser）：
+```
+Desktop Commander:start_process
+  command: agent-browser open https://example.com --headed
+  timeout_ms: 15000
+```
+
+---
+
 ## 核心工作流程
 
 ```bash
-agent-browser open <url>        # 1. 導航到頁面
-agent-browser snapshot -i       # 2. 取得互動元素與 ref
-agent-browser click @e1         # 3. 使用 ref 操作元素
-agent-browser fill @e2 "text"   # 4. 填寫表單
-agent-browser close             # 5. 關閉瀏覽器
+source ~/.zshrc 2>/dev/null; agent-browser open <url>        # 1. 導航到頁面
+source ~/.zshrc 2>/dev/null; agent-browser snapshot -i       # 2. 取得互動元素與 ref
+source ~/.zshrc 2>/dev/null; agent-browser click @e1         # 3. 使用 ref 操作元素
+source ~/.zshrc 2>/dev/null; agent-browser fill @e2 "text"   # 4. 填寫表單
+source ~/.zshrc 2>/dev/null; agent-browser close             # 5. 關閉瀏覽器
 ```
 
 **重要**：DOM 變化後必須重新執行 `snapshot` 取得新的 ref。
@@ -70,13 +96,16 @@ agent-browser get title           # 取得頁面標題
 agent-browser get url             # 取得目前 URL
 ```
 
-### 截圖
+### 截圖與 PDF
 
 ```bash
 agent-browser screenshot          # 截圖到 stdout
 agent-browser screenshot path.png # 儲存到檔案
 agent-browser screenshot --full   # 完整頁面截圖
+agent-browser pdf path.pdf        # 儲存為 PDF（注意：不支援自訂紙張大小）
 ```
+
+**PDF 限制**：`agent-browser pdf` 命令不支援指定紙張大小（如 A4）。如需 A4 格式，請參考下方「進階：自訂格式 PDF」章節。
 
 ### 等待
 
@@ -174,6 +203,51 @@ agent-browser open https://example.com/dashboard
 
 ---
 
+## 進階：自訂格式 PDF
+
+`agent-browser pdf` 不支援自訂紙張大小。如需 A4 格式，使用 Node.js + Playwright：
+
+```javascript
+// save as /tmp/print_a4.mjs
+import { chromium } from '/Users/yufeng/.nvm/versions/node/v22.14.0/lib/node_modules/agent-browser/node_modules/playwright-core/index.mjs';
+import os from 'os';
+import path from 'path';
+
+const browser = await chromium.launch({ headless: true });
+const context = await browser.newContext();
+const page = await context.newPage();
+
+// 導航到目標頁面（如需登入，先處理登入流程）
+await page.goto('https://example.com/report');
+await page.waitForLoadState('networkidle');
+
+// 處理可能的 Modal
+await page.evaluate(() => {
+  const modal = document.querySelector('#myModal');
+  if (modal) modal.style.display = 'none';
+  const backdrop = document.querySelector('.modal-backdrop');
+  if (backdrop) backdrop.remove();
+});
+
+// 生成 A4 PDF
+await page.pdf({
+  path: path.join(os.homedir(), 'Downloads', 'report_A4.pdf'),
+  format: 'A4',
+  printBackground: true,
+  margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' }
+});
+
+console.log('PDF saved');
+await browser.close();
+```
+
+執行：
+```bash
+source ~/.zshrc 2>/dev/null; node /tmp/print_a4.mjs
+```
+
+---
+
 ## Session 管理（多瀏覽器並行）
 
 ```bash
@@ -206,15 +280,15 @@ agent-browser errors                     # 檢視頁面錯誤
 ## 範例：表單提交
 
 ```bash
-agent-browser open https://example.com/form
-agent-browser snapshot -i
+source ~/.zshrc 2>/dev/null; agent-browser open https://example.com/form
+source ~/.zshrc 2>/dev/null; agent-browser snapshot -i
 # 輸出: textbox "Email" [ref=e1], textbox "Password" [ref=e2], button "Submit" [ref=e3]
 
-agent-browser fill @e1 "user@example.com"
-agent-browser fill @e2 "password123"
-agent-browser click @e3
-agent-browser wait --load networkidle
-agent-browser snapshot -i  # 檢查結果
+source ~/.zshrc 2>/dev/null; agent-browser fill @e1 "user@example.com"
+source ~/.zshrc 2>/dev/null; agent-browser fill @e2 "password123"
+source ~/.zshrc 2>/dev/null; agent-browser click @e3
+source ~/.zshrc 2>/dev/null; agent-browser wait --load networkidle
+source ~/.zshrc 2>/dev/null; agent-browser snapshot -i  # 檢查結果
 ```
 
 ---
@@ -225,11 +299,33 @@ agent-browser snapshot -i  # 檢查結果
 
 ```bash
 # 1. 點擊刪除按鈕會彈出確認對話框
-agent-browser click @e5
+source ~/.zshrc 2>/dev/null; agent-browser click @e5
 
 # 2. 檢查對話框內容
-agent-browser eval "document.querySelector('.modal.in')?.innerHTML"
+source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('.modal.in')?.innerHTML"
 
 # 3. 直接調用刪除函數（繞過對話框）
-agent-browser eval "document.querySelector('#hiddenId').value = '123'; DeleteRecord();"
+source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('#hiddenId').value = '123'; DeleteRecord();"
+```
+
+---
+
+## 常見問題
+
+### agent-browser: command not found
+
+確保使用 zsh shell 並載入環境：
+```bash
+source ~/.zshrc 2>/dev/null; agent-browser --version
+```
+
+### PDF 不是 A4 大小
+
+`agent-browser pdf` 不支援自訂紙張大小，請使用「進階：自訂格式 PDF」章節的 Node.js 腳本。
+
+### 瀏覽器已關閉錯誤
+
+如果出現 "Target page, context or browser has been closed" 錯誤，先關閉再重新開啟：
+```bash
+source ~/.zshrc 2>/dev/null; agent-browser close 2>/dev/null; sleep 1; agent-browser open https://example.com --headed
 ```
