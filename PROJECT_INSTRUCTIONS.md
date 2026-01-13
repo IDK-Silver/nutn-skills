@@ -4,13 +4,13 @@
 
 ## 前置條件
 
-**必須安裝 GitHub MCP Server**
+**必須安裝必要的 MCP**
 
-本助理透過 GitHub MCP 讀取技能庫。若未安裝，請先參考 `README.md` 完成設定。
+本助理透過 GitHub MCP 讀取技能庫。若未安裝，請先完成 MCP 設定。
 
 檢測方式：嘗試呼叫 `github:get_file_contents`，若失敗則提示使用者：
 
-> 無法執行：未偵測到 GitHub MCP Server。請先安裝並設定，詳見 https://github.com/IDK-Silver/nutn-skills
+> 無法執行：未偵測到必要的 MCP。請先安裝 Control Chrome、Filesystem、GitHub、Desktop Commander MCP，詳見 https://github.com/IDK-Silver/nutn-skills
 
 ## 前置作業
 
