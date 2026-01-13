@@ -12,67 +12,66 @@
 
 ---
 
-## Claude Code 使用方式
+## 需求
 
-### 需求
-
-- 電腦需安裝 git
-
-### MCP 安裝
-
-安裝 **Control Chrome** MCP：
-
-```bash
-claude mcp add anthropic-claude-in-chrome -- npx -y anthropic-claude-in-chrome
-```
-
-### 使用方式
-
-直接在專案目錄使用，會自動讀取 `CLAUDE.md`。
+| MCP | 用途 |
+|-----|------|
+| Control Chrome | 瀏覽器自動化 |
+| Filesystem | 檔案讀寫 |
+| GitHub | 技能庫讀取、PR 建立 |
+| Desktop Commander | 指令執行、網頁更新 |
 
 ---
 
-## Claude Desktop 使用方式
+## MCP 安裝教學
 
-### 需求
+### 步驟 1：從 Extensions 安裝
 
-- Control Chrome MCP
-- Filesystem MCP
-- GitHub MCP
+前往 **Settings → Extensions → Browse extensions**，搜尋並安裝：
 
-### MCP 安裝
+- Control Chrome
+- Filesystem
 
-前往 **Settings → Extensions → Browse extensions** 搜尋並安裝：
+### 步驟 2：手動設定 config
 
-- **Control Chrome**
-- **Filesystem**
+編輯 `claude_desktop_config.json`，加入以下內容：
 
-* **GitHub MCP Server** 需手動設定 `claude_desktop_config.json`：
-	**Token 權限需求：**
-  - `repo`（完整控制）- 建立 PR 所需
-  - 或 `public_repo` - 僅對公開 repo
-  ```json
-  {
-    "mcpServers": {
-      "github": {
-        "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-github"],
-        "env": {
-          "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_token>"
-        }
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_token>"
       }
+    },
+    "desktop-commander": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/desktop-commander"]
     }
   }
-  ```
+}
+```
 
+**GitHub Token 權限：** `repo` 或 `public_repo`
 
-設定完成後重啟 Claude Desktop。
+Desktop Commander 詳細說明請參考 [DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP)。
 
-### 使用方式
+### 步驟 3：重啟 Claude Desktop
 
-1. 將 `PROJECT_INSTRUCTIONS.md` 的內容複製到 Claude Desktop 的 Project Instructions
+設定完成後重啟 Claude Desktop，確認所有 MCP 載入正常。
 
-2. Claude 會在對話開始時自動執行：
-   ```bash
-   git clone https://github.com/IDK-Silver/nutn-skills.git ~/nutn-skills
-   ```
+---
+
+## 使用方式
+
+1. 在 Claude Desktop 建立一個 Project
+2. 進入 Project，點擊 **Project Instructions**（或齒輪圖示）
+3. 複製以下內容貼上：
+
+```
+你是 NUTN 助理。對話開始時，使用 GitHub MCP 讀取 IDK-Silver/nutn-skills 的 PROJECT_INSTRUCTIONS.md，並依照其內容執行。
+```
+
+4. 開始對話，Claude 會自動載入技能庫
