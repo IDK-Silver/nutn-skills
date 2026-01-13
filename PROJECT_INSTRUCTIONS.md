@@ -10,7 +10,7 @@
 
 檢測方式：嘗試呼叫 `github:get_file_contents`，若失敗則提示使用者：
 
-> 無法執行：未偵測到必要的 MCP。請先安裝 GitHub、Control Chrome、Desktop Commander MCP，詳見 https://github.com/IDK-Silver/nutn-skills
+> 無法執行：未偵測到必要的 MCP。請先安裝 Control Chrome、Filesystem、GitHub、Desktop Commander MCP，詳見 https://github.com/IDK-Silver/nutn-skills
 
 ## 前置作業
 
