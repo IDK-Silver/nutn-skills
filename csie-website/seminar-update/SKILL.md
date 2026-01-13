@@ -8,6 +8,14 @@
 
 ---
 
+## ⚠️ 重要執行規則
+
+> **階段 1 完成後必須停下來等待使用者確認，不可自動執行階段 2。**
+>
+> 階段 1 產生的 SQL 需要使用者手動匯入 phpMyAdmin，必須等使用者確認匯入完成後才能繼續階段 2。若在資料庫尚未建立前就更新網頁，會導致網站錯誤。
+
+---
+
 ## 資料來源
 
 | 項目 | 位置 |
@@ -91,7 +99,7 @@ CREATE TABLE `seminar_info_{學期代碼}` (
 
 生成 INSERT 語句，每週一筆資料。
 
-### 步驟 1.5：提供 SQL 檔案下載
+### 步驟 1.5：提供 SQL 檔案下載並等待確認
 
 將 SQL 檔案以 artifact 形式提供下載，並告知使用者：
 
@@ -101,11 +109,15 @@ CREATE TABLE `seminar_info_{學期代碼}` (
 4. 點選「匯入」分頁
 5. 選擇檔案並執行
 
-**重要**：不要在回應中顯示資料庫帳號密碼，請使用者參考 Project 文件。
+**重要**：
+- 不要在回應中顯示資料庫帳號密碼，請使用者參考 Project 文件
+- **階段 1 完成後必須停止，詢問使用者是否已完成 SQL 匯入，確認後才能執行階段 2**
 
 ---
 
 ## 階段 2：更新網頁檔案（自動部署）
+
+> **前置條件**：使用者已確認 SQL 匯入完成
 
 ### 步驟 2.1：建立 GitHub 分支
 
@@ -140,33 +152,71 @@ $_SESSION['current_semester'] = "{新學期代碼}";
 
 ### 步驟 2.4：SSH 同步到內網
 
-從 Project 文件取得 SSH 連線資訊，執行：
+從 Project 文件取得 SSH 連線資訊。
+
+**正確指令**（需先設定 git credential helper）：
 
 ```bash
-ssh -tt {host} "cd ~/Documents/Github/nutn-csie-web; git pull"
+ssh -tt ifang "gh auth setup-git; cd ~/Documents/Github/nutn-csie-web; git pull"
 ```
+
+**說明**：
+- `gh auth setup-git` 會將 GitHub CLI 的認證連結到 git credential helper
+- 若不執行此步驟，git pull 會因 `wincredman` 無法取得憑證而要求輸入帳密
 
 ### 步驟 2.5：FTP 上傳
 
-從 Project 文件取得 FTP 連線資訊，上傳變更的檔案：
+從 Project 文件取得 FTP 連線資訊，上傳變更的檔案。
+
+**正確指令**（Windows PowerShell 環境）：
+
+```bash
+ssh -tt ifang "cd ~/Documents/Github/nutn-csie-web; curl.exe -T subsite/seminar/index.php ftp://140.133.3.175/ftp/html/subsite/seminar/index.php --user nutncsie:{密碼}"
+ssh -tt ifang "cd ~/Documents/Github/nutn-csie-web; curl.exe -T subsite/seminar/old_seminar.php ftp://140.133.3.175/ftp/html/subsite/seminar/old_seminar.php --user nutncsie:{密碼}"
+```
+
+**重要**：
+- 必須使用 `curl.exe` 而非 `curl`
+- PowerShell 中 `curl` 是 `Invoke-WebRequest` 的 alias，參數語法不同
+- `curl.exe` 才是真正的 curl 執行檔
 
 | 本地檔案 | FTP 目標路徑 |
 |----------|-------------|
 | `subsite/seminar/index.php` | `/ftp/html/subsite/seminar/index.php` |
 | `subsite/seminar/old_seminar.php` | `/ftp/html/subsite/seminar/old_seminar.php` |
 
-使用 PowerShell 的 WebClient 或 FTP 命令上傳。
-
 ---
 
 ## 錯誤處理
 
-| 情況 | 處理方式 |
-|------|----------|
-| 無法取得學校行事曆 | 請使用者手動提供開學日、考試週、放假日資訊 |
-| GitHub API 失敗 | 提供修改內容，請使用者手動建立 PR |
-| SSH 連線失敗 | 確認 VPN 或網路狀態，提示手動執行 git pull |
-| FTP 上傳失敗 | 提供檔案內容，請使用者手動上傳 |
+| 情況 | 錯誤訊息 | 處理方式 |
+|------|----------|----------|
+| 無法取得學校行事曆 | - | 請使用者手動提供開學日、考試週、放假日資訊 |
+| GitHub API 失敗 | - | 提供修改內容，請使用者手動建立 PR |
+| gh token 失效 | `The token in default is invalid` | 提示使用者在內網主機執行 `gh auth login -h github.com` 重新認證 |
+| git credential 未設定 | `Unable to persist credentials with the 'wincredman' credential store` | 在 git pull 前先執行 `gh auth setup-git` |
+| PowerShell curl 參數錯誤 | `參數名稱不明確` 或 `AmbiguousParameter` | 改用 `curl.exe` 而非 `curl` |
+| SSH 連線失敗 | - | 確認 VPN 或網路狀態，提示手動執行指令 |
+| FTP 上傳逾時 | `Timeout was reached` | 確認是否在內網環境，FTP 僅限內網存取 |
+
+### 常見問題排查流程
+
+**SSH git pull 失敗時**：
+
+1. 先檢查 gh 認證狀態：
+   ```bash
+   ssh -tt ifang "gh auth status"
+   ```
+
+2. 若顯示 token invalid，請使用者重新登入：
+   ```bash
+   ssh -tt ifang "gh auth login -h github.com"
+   ```
+
+3. 設定 git credential helper 後再 pull：
+   ```bash
+   ssh -tt ifang "gh auth setup-git; cd ~/Documents/Github/nutn-csie-web; git pull"
+   ```
 
 ---
 
@@ -176,17 +226,18 @@ ssh -tt {host} "cd ~/Documents/Github/nutn-csie-web; git pull"
 
 **預期行為**：
 
-**階段 1**：
+### 階段 1（自動執行）：
 1. 從學校行事曆取得 114-2 學期資訊
 2. 計算 18 週週四，標記不可用日期（status=0 或 1）
 3. 生成 `seminar_info_1142.sql` 並提供下載
 4. 告知 phpMyAdmin 匯入步驟
+5. **⏸️ 停止並詢問：「請確認 SQL 已匯入完成，我再繼續執行階段 2」**
 
-**階段 2**（使用者確認後）：
+### 階段 2（使用者確認後）：
 1. 建立分支 `update-seminar-1142`
 2. 修改 `index.php`（1141 → 1142）
 3. 修改 `old_seminar.php`（新增 1141 選項）
 4. 建立 PR 並合併
-5. SSH 執行 git pull
-6. FTP 上傳變更檔案
+5. SSH 執行 `gh auth setup-git` + `git pull`
+6. FTP 使用 `curl.exe` 上傳變更檔案
 7. 回報完成
