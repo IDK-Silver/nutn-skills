@@ -32,8 +32,9 @@
 
 - Control Chrome
 - Filesystem
+- Desktop Commander
 
-### 步驟 2：手動設定 config
+### 步驟 2：手動設定 GitHub MCP
 
 編輯 `claude_desktop_config.json`，加入以下內容：
 
@@ -46,18 +47,12 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_token>"
       }
-    },
-    "desktop-commander": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/desktop-commander"]
     }
   }
 }
 ```
 
 **GitHub Token 權限：** `repo` 或 `public_repo`
-
-Desktop Commander 詳細說明請參考 [DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP)。
 
 ### 步驟 3：重啟 Claude Desktop
 
