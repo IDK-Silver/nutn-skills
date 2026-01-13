@@ -8,6 +8,7 @@
 |------|------|
 | workhour | 南大工時系統自動化填寫 |
 | academic-calendar | 學校行事曆查詢 |
+| csie-website | 資工系網站管理與更新 |
 | skill-creator | 技能建立範本 |
 
 ---
