@@ -41,25 +41,15 @@ SSH 到內網，fetch 遠端並比較差異：
 ssh -tt {host} "cd ~/Documents/Github/nutn-csie-web; git fetch origin; git diff --name-only HEAD origin/main"
 ```
 
-**輸出範例**：
-```
-subsite/seminar/index.php
-subsite/seminar/old_seminar.php
-```
-
-### 步驟 2：確認變更
-
-顯示變更檔案清單，詢問使用者是否繼續部署。
-
 若無變更（輸出為空），告知使用者已是最新狀態，結束流程。
 
-### 步驟 3：執行 git pull
+### 步驟 2：執行 git pull
 
 ```bash
 ssh -tt {host} "gh auth setup-git; cd ~/Documents/Github/nutn-csie-web; git pull"
 ```
 
-### 步驟 4：上傳至 FTP
+### 步驟 3：上傳至 FTP
 
 對每個變更的檔案，使用 `curl.exe` 上傳：
 
@@ -72,7 +62,7 @@ ssh -tt {host} "cd ~/Documents/Github/nutn-csie-web; curl.exe -T {file_path} ftp
 - 逐一上傳並回報進度
 - 從 Project 文件取得 FTP 連線資訊
 
-### 步驟 5：回報結果
+### 步驟 4：回報結果
 
 列出所有已上傳的檔案，確認部署完成。
 
@@ -97,25 +87,11 @@ ssh -tt {host} "cd ~/Documents/Github/nutn-csie-web; curl.exe -T {file_path} ftp
 
 **預期行為**：
 
-1. SSH 連線，執行 `git fetch` + `git diff`
-2. 顯示變更清單：
-   ```
-   偵測到 2 個檔案變更：
-   - subsite/seminar/index.php
-   - subsite/seminar/old_seminar.php
-   
-   是否繼續部署？
-   ```
-3. 使用者確認後，執行 `git pull`
-4. 逐一上傳檔案，回報進度：
+1. SSH 連線，執行 `git fetch` + `git diff` 取得變更清單
+2. 執行 `git pull` 拉取最新程式碼
+3. 逐一上傳檔案，回報進度：
    ```
    [1/2] 上傳 subsite/seminar/index.php ... 完成
    [2/2] 上傳 subsite/seminar/old_seminar.php ... 完成
    ```
-5. 回報部署完成
-
----
-
-**使用者**：「同步系網到 FTP」
-
-**預期行為**：同上流程。
+4. 回報部署完成
