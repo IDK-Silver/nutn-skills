@@ -505,6 +505,7 @@ Python datetime.weekday(): 0=一, 1=二, 2=三, 3=四, 4=五, 5=六, 6=日
 12. **自動排除假日**：有行事曆資料時自動排除，不詢問使用者
 13. **ref 不穩定時**：改用 `eval` 直接操作 DOM
 14. **下載 PDF 用 Node.js**：agent-browser pdf 命令不支援 A4 格式，需用 Playwright 腳本
+15. **完成後關閉瀏覽器**：任務完成後執行 `agent-browser close` 釋放資源
 
 ---
 
