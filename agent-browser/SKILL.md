@@ -67,11 +67,11 @@ agent-browser close             # 5. 關閉瀏覽器
 ### 本地環境
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser open <url>        # 1. 導航到頁面
-source ~/.zshrc 2>/dev/null; agent-browser snapshot -i       # 2. 取得互動元素與 ref
-source ~/.zshrc 2>/dev/null; agent-browser click @e1         # 3. 使用 ref 操作元素
-source ~/.zshrc 2>/dev/null; agent-browser fill @e2 "text"   # 4. 填寫表單
-source ~/.zshrc 2>/dev/null; agent-browser close             # 5. 關閉瀏覽器
+agent-browser open <url>        # 1. 導航到頁面
+agent-browser snapshot -i       # 2. 取得互動元素與 ref
+agent-browser click @e1         # 3. 使用 ref 操作元素
+agent-browser fill @e2 "text"   # 4. 填寫表單
+agent-browser close             # 5. 關閉瀏覽器
 ```
 
 **重要**：DOM 變化後必須重新執行 `snapshot` 取得新的 ref。
@@ -272,7 +272,7 @@ await browser.close();
 
 執行：
 ```bash
-source ~/.zshrc 2>/dev/null; node /tmp/print_a4.mjs
+node /tmp/print_a4.mjs
 ```
 
 ---
@@ -309,15 +309,15 @@ agent-browser errors                     # 檢視頁面錯誤
 ## 範例：表單提交
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser open https://example.com/form
-source ~/.zshrc 2>/dev/null; agent-browser snapshot -i
+agent-browser open https://example.com/form
+agent-browser snapshot -i
 # 輸出: textbox "Email" [ref=e1], textbox "Password" [ref=e2], button "Submit" [ref=e3]
 
-source ~/.zshrc 2>/dev/null; agent-browser fill @e1 "user@example.com"
-source ~/.zshrc 2>/dev/null; agent-browser fill @e2 "password123"
-source ~/.zshrc 2>/dev/null; agent-browser click @e3
-source ~/.zshrc 2>/dev/null; agent-browser wait --load networkidle
-source ~/.zshrc 2>/dev/null; agent-browser snapshot -i  # 檢查結果
+agent-browser fill @e1 "user@example.com"
+agent-browser fill @e2 "password123"
+agent-browser click @e3
+agent-browser wait --load networkidle
+agent-browser snapshot -i  # 檢查結果
 ```
 
 ---
@@ -328,13 +328,13 @@ source ~/.zshrc 2>/dev/null; agent-browser snapshot -i  # 檢查結果
 
 ```bash
 # 1. 點擊刪除按鈕會彈出確認對話框
-source ~/.zshrc 2>/dev/null; agent-browser click @e5
+agent-browser click @e5
 
 # 2. 檢查對話框內容
-source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('.modal.in')?.innerHTML"
+agent-browser eval "document.querySelector('.modal.in')?.innerHTML"
 
 # 3. 直接調用刪除函數（繞過對話框）
-source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('#hiddenId').value = '123'; DeleteRecord();"
+agent-browser eval "document.querySelector('#hiddenId').value = '123'; DeleteRecord();"
 ```
 
 ---
@@ -343,9 +343,10 @@ source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('#hidden
 
 ### agent-browser: command not found
 
-確保使用 zsh shell 並載入環境：
+確保已正確安裝：
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser --version
+npm install -g agent-browser
+agent-browser --version
 ```
 
 ### PDF 不是 A4 大小
@@ -356,5 +357,5 @@ source ~/.zshrc 2>/dev/null; agent-browser --version
 
 如果出現 "Target page, context or browser has been closed" 錯誤，先關閉再重新開啟：
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser close 2>/dev/null; sleep 1; agent-browser open https://example.com --headed
+agent-browser close 2>/dev/null; sleep 1; agent-browser open https://example.com --headed
 ```

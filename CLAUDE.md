@@ -25,6 +25,37 @@ which agent-browser 2>/dev/null || echo "NOT_INSTALLED"
 - 雲端環境（`/opt/node22/...`）：直接執行 `agent-browser ...`
 - 本地環境（有 nvm）：使用 `source ~/.zshrc 2>/dev/null; agent-browser ...`
 
+### 本地計算替代方案
+
+技能文件中的 `agent-browser eval` JavaScript 腳本（如日期計算、星期幾驗證）可能較難在本地執行或除錯。
+
+建議改用 `uv run python` 執行 Python 來處理本地計算：
+
+```bash
+# 範例：計算民國日期的星期幾
+uv run python -c "
+from datetime import datetime
+roc_date = '115/1/15'
+y, m, d = map(int, roc_date.split('/'))
+dt = datetime(y + 1911, m, d)
+weekdays = ['一', '二', '三', '四', '五', '六', '日']
+print(f'{roc_date} 是星期{weekdays[dt.weekday()]}')
+"
+```
+
+**適用場景**：
+- 日期計算與星期幾驗證
+- 生成工作日期清單
+- 資料處理與統計
+
+**注意**：與網頁互動的操作（DOM 操作、表單填寫）仍需使用 `agent-browser eval`。
+
+### 使用者資料
+
+使用者資料放置於 `data/user/` 目錄（已加入 `.gitignore`）。
+
+**執行技能時，必須主動讀取此目錄尋找所需資料**（如帳號、身份證字號等），不要先詢問使用者。若目錄中找不到需要的資料，再提醒使用者將資料放入該目錄，或請使用者直接輸入。
+
 ## 自訂技能
 
 每次對話開始時：

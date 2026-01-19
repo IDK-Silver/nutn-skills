@@ -15,27 +15,6 @@
 
 ---
 
-## 執行環境
-
-**重要**：agent-browser 需要透過 nvm 載入 Node.js 環境，必須使用 Desktop Commander 的 `start_process` 搭配 zsh shell：
-
-```bash
-# 正確寫法
-Desktop Commander:start_process
-  command: source ~/.zshrc 2>/dev/null; agent-browser open https://example.com --headed
-  shell: /bin/zsh
-  timeout_ms: 15000
-
-# 錯誤寫法（會找不到 agent-browser）
-Desktop Commander:start_process
-  command: agent-browser open https://example.com --headed
-  timeout_ms: 15000
-```
-
-**所有 agent-browser 命令都必須加上 `source ~/.zshrc 2>/dev/null;` 前綴並指定 `/bin/zsh` shell。**
-
----
-
 ## 工作流程
 
 ### 1. 初始確認與登入
@@ -43,11 +22,11 @@ Desktop Commander:start_process
 **步驟 1：開啟瀏覽器並檢查登入狀態**
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser close 2>/dev/null; sleep 1; agent-browser open https://gaweb.nutn.edu.tw/workhour/Budget --headed
+agent-browser close 2>/dev/null; sleep 1; agent-browser open https://gaweb.nutn.edu.tw/workhour/Budget --headed
 ```
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser snapshot -i
+agent-browser snapshot -i
 ```
 
 檢查 snapshot 結果：
@@ -58,19 +37,19 @@ source ~/.zshrc 2>/dev/null; agent-browser snapshot -i
 
 ```bash
 # 點擊登入連結（如果在首頁）
-source ~/.zshrc 2>/dev/null; agent-browser click @e2  # 登入連結的 ref
+agent-browser click @e2  # 登入連結的 ref
 
 # 取得表單元素
-source ~/.zshrc 2>/dev/null; agent-browser snapshot -i
+agent-browser snapshot -i
 
 # 填寫帳號密碼（預設都是身份證字號）
-source ~/.zshrc 2>/dev/null; agent-browser fill @e5 "身份證字號"; agent-browser fill @e6 "身份證字號"
+agent-browser fill @e5 "身份證字號"; agent-browser fill @e6 "身份證字號"
 
 # 點擊登入按鈕（使用 eval 更穩定）
-source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('input[type=submit], button[type=submit]').click()"
+agent-browser eval "document.querySelector('input[type=submit], button[type=submit]').click()"
 
 # 等待頁面載入
-source ~/.zshrc 2>/dev/null; agent-browser wait 2000; agent-browser get url
+agent-browser wait 2000; agent-browser get url
 ```
 
 登入成功後 URL 會變成 `/workhour/Budget`。
@@ -80,7 +59,7 @@ source ~/.zshrc 2>/dev/null; agent-browser wait 2000; agent-browser get url
 系統可能會顯示提示訊息的 Modal，用 eval 關閉：
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('#myModal button[data-dismiss=modal]')?.click()"
+agent-browser eval "document.querySelector('#myModal button[data-dismiss=modal]')?.click()"
 ```
 
 ### 2. 收集計畫資訊
@@ -94,7 +73,7 @@ source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('#myModa
 
 ```bash
 # 取得計畫列表
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 Array.from(document.querySelectorAll('table tbody tr')).slice(1).map(r => ({
   id: r.cells[0]?.textContent?.trim(),
   name: r.cells[1]?.textContent?.trim(),
@@ -106,10 +85,10 @@ Array.from(document.querySelectorAll('table tbody tr')).slice(1).map(r => ({
 
 ```bash
 # 點擊對應計畫的「選擇」連結
-source ~/.zshrc 2>/dev/null; agent-browser click @eXX  # 根據 snapshot 結果找到對應的 ref
+agent-browser click @eXX  # 根據 snapshot 結果找到對應的 ref
 
 # 等待頁面載入
-source ~/.zshrc 2>/dev/null; agent-browser wait 1500; agent-browser snapshot
+agent-browser wait 1500; agent-browser snapshot
 ```
 
 #### 分析歷史紀錄
@@ -117,7 +96,7 @@ source ~/.zshrc 2>/dev/null; agent-browser wait 1500; agent-browser snapshot
 **關鍵：必須用程式碼計算星期幾（禁止觀察猜測）**
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 // 取得歷史紀錄
 const rows = Array.from(document.querySelectorAll('table tbody tr')).slice(1);
 const history = rows.map(r => ({
@@ -181,12 +160,12 @@ JSON.stringify({
 
 1. 回到計畫列表頁面：
    ```bash
-   source ~/.zshrc 2>/dev/null; agent-browser open https://gaweb.nutn.edu.tw/workhour/Budget
+   agent-browser open https://gaweb.nutn.edu.tw/workhour/Budget
    ```
 
 2. 找出同名舊計畫並選擇：
    ```bash
-   source ~/.zshrc 2>/dev/null; agent-browser click @eXX  # 舊計畫的選擇連結
+   agent-browser click @eXX  # 舊計畫的選擇連結
    ```
 
 3. 分析舊計畫的歷史紀錄（使用上方相同的 eval 程式碼）
@@ -200,7 +179,7 @@ JSON.stringify({
 ### 4. 檢查頁面預設值
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 const checkedBoxes = Array.from(document.querySelectorAll('input[type=\"checkbox\"]'))
   .map(cb => ({id: cb.id, name: cb.name, checked: cb.checked, label: cb.parentElement?.textContent?.trim()}))
   .filter(item => item.checked);
@@ -242,7 +221,7 @@ const wother = document.getElementById('Wother')?.value || '';
 #### 自動生成日期清單
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 function generateWorkDates(startRoc, endRoc, workWeekdays, holidays = []) {
   const results = [];
   const weekdayNames = ['日', '一', '二', '三', '四', '五', '六'];
@@ -316,24 +295,24 @@ JSON.stringify(dates, null, 2);
 
 ```bash
 # 第 1 筆
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 document.getElementById('WorkDay').value = '115/1/5';
 document.getElementById('StartT').value = '17:40';
 document.getElementById('EndT').value = '20:40';
 document.getElementById('buttonID').click();
 "
 
-source ~/.zshrc 2>/dev/null; agent-browser wait 1500
+agent-browser wait 1500
 
 # 第 2 筆
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 document.getElementById('WorkDay').value = '115/1/5';
 document.getElementById('StartT').value = '21:10';
 document.getElementById('EndT').value = '23:10';
 document.getElementById('buttonID').click();
 "
 
-source ~/.zshrc 2>/dev/null; agent-browser wait 1500
+agent-browser wait 1500
 
 # 繼續...
 ```
@@ -343,7 +322,7 @@ source ~/.zshrc 2>/dev/null; agent-browser wait 1500
 ### 9. 完成驗證
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 const rows = Array.from(document.querySelectorAll('table tbody tr')).slice(1);
 const records = rows.map(r => ({
   date: r.cells[0]?.textContent?.trim(),
@@ -368,7 +347,7 @@ JSON.stringify({ records, count: records.length, totalHours }, null, 2);
 #### 步驟 1：建立下載腳本
 
 ```bash
-source ~/.zshrc 2>/dev/null; cat << 'EOF' > /tmp/print_workhour_a4.mjs
+cat << 'EOF' > /tmp/print_workhour_a4.mjs
 import { chromium } from '/Users/yufeng/.nvm/versions/node/v22.14.0/lib/node_modules/agent-browser/node_modules/playwright-core/index.mjs';
 import os from 'os';
 import path from 'path';
@@ -423,7 +402,7 @@ EOF
 
 ```bash
 # 下載 115 年 1 月的工時紀錄表
-source ~/.zshrc 2>/dev/null; node /tmp/print_workhour_a4.mjs 2026 1 <使用者帳號>
+node /tmp/print_workhour_a4.mjs 2026 1 <使用者帳號>
 ```
 
 參數說明：
@@ -442,7 +421,7 @@ PDF 會儲存到 `~/Downloads/workhour_115_01_A4.pdf`。
 ### 步驟 1：取得記錄 ID
 
 ```bash
-source ~/.zshrc 2>/dev/null; agent-browser eval "
+agent-browser eval "
 Array.from(document.querySelectorAll('a')).filter(a => a.textContent.includes('刪除')).map(a => ({
   id: a.name,
   onclick: a.getAttribute('onclick')
@@ -454,8 +433,8 @@ Array.from(document.querySelectorAll('a')).filter(a => a.textContent.includes('�
 
 ```bash
 # 設定要刪除的 ID 並調用刪除函數
-source ~/.zshrc 2>/dev/null; agent-browser eval "document.querySelector('#hiddenEmployeeId').value = '455930'; DeleteEmployee();"
-source ~/.zshrc 2>/dev/null; agent-browser wait 1500
+agent-browser eval "document.querySelector('#hiddenEmployeeId').value = '455930'; DeleteEmployee();"
+agent-browser wait 1500
 
 # 繼續刪除下一筆...
 ```
@@ -491,21 +470,20 @@ Python datetime.weekday(): 0=一, 1=二, 2=三, 3=四, 4=五, 5=六, 6=日
 
 ## 重要注意事項
 
-1. **必須使用 zsh shell**：所有 agent-browser 命令都要加 `source ~/.zshrc 2>/dev/null;` 前綴並指定 `/bin/zsh` shell
-2. **必須用程式碼驗證星期幾**：分析歷史記錄時，絕對不能靠觀察猜測，必須用 JavaScript 計算
-3. **空計畫查舊計畫**：如果目標計畫沒有歷史紀錄，要找同名的舊計畫（如 D114-03 → D115-03）分析工作模式
-4. **必須處理假日**：載入 academic-calendar 技能取得放假日資訊
-5. **套用特殊規則**：夜間值班需排除寒假、暑假、國定假日
-6. **優先使用預設值**：除非使用者明確要求修改或完全沒有預設勾選，否則保留頁面預設的工作類別和內容
-7. **必須勾選工作類別**：系統要求至少選擇一個工作類別，否則會報錯
-8. **日期格式**：使用民國年格式（例如：115/1/5）
-9. **時間格式**：24 小時制，使用冒號分隔（例如：17:40）
-10. **批次操作**：逐筆執行 + wait 1500ms，不要用 async/await
-11. **一次性確認**：用表格呈現完整計畫，不分步驟詢問
-12. **自動排除假日**：有行事曆資料時自動排除，不詢問使用者
-13. **ref 不穩定時**：改用 `eval` 直接操作 DOM
-14. **下載 PDF 用 Node.js**：agent-browser pdf 命令不支援 A4 格式，需用 Playwright 腳本
-15. **完成後關閉瀏覽器**：任務完成後執行 `agent-browser close` 釋放資源
+1. **必須用程式碼驗證星期幾**：分析歷史記錄時，絕對不能靠觀察猜測，必須用 JavaScript 計算
+2. **空計畫查舊計畫**：如果目標計畫沒有歷史紀錄，要找同名的舊計畫（如 D114-03 → D115-03）分析工作模式
+3. **必須處理假日**：載入 academic-calendar 技能取得放假日資訊
+4. **套用特殊規則**：夜間值班需排除寒假、暑假、國定假日
+5. **優先使用預設值**：除非使用者明確要求修改或完全沒有預設勾選，否則保留頁面預設的工作類別和內容
+6. **必須勾選工作類別**：系統要求至少選擇一個工作類別，否則會報錯
+7. **日期格式**：使用民國年格式（例如：115/1/5）
+8. **時間格式**：24 小時制，使用冒號分隔（例如：17:40）
+9. **批次操作**：逐筆執行 + wait 1500ms，不要用 async/await
+10. **一次性確認**：用表格呈現完整計畫，不分步驟詢問
+11. **自動排除假日**：有行事曆資料時自動排除，不詢問使用者
+12. **ref 不穩定時**：改用 `eval` 直接操作 DOM
+13. **下載 PDF 用 Node.js**：agent-browser pdf 命令不支援 A4 格式，需用 Playwright 腳本
+14. **完成後關閉瀏覽器**：任務完成後執行 `agent-browser close` 釋放資源
 
 ---
 
