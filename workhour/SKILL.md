@@ -338,79 +338,75 @@ JSON.stringify({ records, count: records.length, totalHours }, null, 2);
 
 確認所有記錄都已成功新增，向使用者報告完成狀態（包含成功新增的筆數和總時數）。
 
-### 10. 下載 A4 PDF 工時紀錄表
+### 10. 下載 PDF 工時紀錄表
 
-填寫完成後，可下載 A4 格式的 PDF 工時紀錄表。
+填寫完成後，下載 PDF 工時紀錄表。
 
-**注意**：agent-browser 的 `pdf` 命令不支援自訂紙張大小，必須使用 Node.js + Playwright 直接生成。
+**重要**：必須透過正常流程（選擇計畫 → 列印按鈕 → 選擇年月）來設定 session 狀態，直接用 URL 跳轉會導致顯示計畫選擇頁而非工時紀錄表。
 
-#### 步驟 1：建立下載腳本
+#### 使用 agent-browser 下載（推薦）
 
-```bash
-cat << 'EOF' > /tmp/print_workhour_a4.mjs
-import { chromium } from '/Users/yufeng/.nvm/versions/node/v22.14.0/lib/node_modules/agent-browser/node_modules/playwright-core/index.mjs';
-import os from 'os';
-import path from 'path';
-
-const args = process.argv.slice(2);
-const year = args[0] || '2026';  // 西元年
-const month = args[1] || '1';    // 月份
-const userId = args[2] || '<使用者帳號>';  // 身份證字號
-
-const browser = await chromium.launch({ headless: true });
-const context = await browser.newContext();
-const page = await context.newPage();
-
-// 登入
-await page.goto('https://gaweb.nutn.edu.tw/workhour/Home/Login');
-
-// 關閉 Modal（如果有）
-await page.evaluate(() => {
-  const modal = document.querySelector('#myModal');
-  if (modal) modal.style.display = 'none';
-  const backdrop = document.querySelector('.modal-backdrop');
-  if (backdrop) backdrop.remove();
-});
-
-await page.fill('input[type="text"]', userId);
-await page.fill('input[type="password"]', userId);
-await page.evaluate(() => {
-  document.querySelector('input[type="submit"]').click();
-});
-await page.waitForURL('**/Budget', { timeout: 10000 });
-
-// 前往報表頁面
-await page.goto(`https://gaweb.nutn.edu.tw/workhour/Hours/SetYM?WorkYear=${year}&WorkMonth=${month}`);
-await page.waitForLoadState('networkidle');
-
-// 生成 A4 PDF
-const rocYear = parseInt(year) - 1911;
-const pdfPath = path.join(os.homedir(), 'Downloads', `workhour_${rocYear}_${month.padStart(2, '0')}_A4.pdf`);
-await page.pdf({
-  path: pdfPath,
-  format: 'A4',
-  printBackground: true,
-  margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' }
-});
-
-console.log('PDF saved to', pdfPath);
-await browser.close();
-EOF
-```
-
-#### 步驟 2：執行下載
+如果已在 `/Hours/Create` 頁面（填寫工時後）：
 
 ```bash
-# 下載 115 年 1 月的工時紀錄表
-node /tmp/print_workhour_a4.mjs 2026 1 <使用者帳號>
+# 點擊「列印工時紀錄表」按鈕
+agent-browser snapshot -i  # 找到列印按鈕的 ref
+agent-browser click @eXX   # 列印工時紀錄表按鈕
+
+# 進入年月選擇頁 /Hours/Report2
+agent-browser wait 1500
+agent-browser snapshot -i  # 找到年月的「選擇」連結
+agent-browser click @eXX   # 選擇對應年月
+
+# 進入報表頁 /Hours/Report
+agent-browser wait 1500
+
+# 下載 PDF
+agent-browser pdf ~/Downloads/workhour_115_01.pdf
 ```
 
-參數說明：
-- 第 1 個參數：西元年（例如 2026）
-- 第 2 個參數：月份（例如 1）
-- 第 3 個參數：身份證字號（用於登入）
+#### 完整流程（從頭開始）
 
-PDF 會儲存到 `~/Downloads/workhour_115_01_A4.pdf`。
+如果需要從頭開始下載特定計畫的工時紀錄表：
+
+```bash
+# 1. 開啟並登入
+agent-browser close 2>/dev/null; sleep 1
+agent-browser open https://gaweb.nutn.edu.tw/workhour/Budget --headed
+# （執行登入流程...）
+
+# 2. 選擇計畫（在 /Budget 頁面）
+agent-browser snapshot -i
+agent-browser click @eXX  # 點擊目標計畫的「選擇」連結
+
+# 3. 點擊列印按鈕（在 /Hours/Create 頁面）
+agent-browser wait 1500
+agent-browser snapshot -i
+agent-browser click @eXX  # 「列印工時紀錄表」按鈕
+
+# 4. 選擇年月（在 /Hours/Report2 頁面）
+agent-browser wait 1500
+agent-browser snapshot -i
+agent-browser click @eXX  # 選擇對應年月
+
+# 5. 下載 PDF（在 /Hours/Report 頁面）
+agent-browser wait 1500
+agent-browser pdf ~/Downloads/workhour_115_01.pdf
+```
+
+#### 頁面流程說明
+
+```
+/Budget (計畫列表)
+    ↓ 點擊「選擇」
+/Hours/Create (工時填寫頁)
+    ↓ 點擊「列印工時紀錄表」
+/Hours/Report2 (年月選擇頁)
+    ↓ 點擊年月的「選擇」
+/Hours/Report (工時紀錄表) ← 在此頁面下載 PDF
+```
+
+**注意**：不可直接用 URL 跳到 `/Hours/Report` 或 `/Hours/SetYM`，系統需要 session 狀態才能顯示正確的工時紀錄表。
 
 ---
 
@@ -482,20 +478,22 @@ Python datetime.weekday(): 0=一, 1=二, 2=三, 3=四, 4=五, 5=六, 6=日
 10. **一次性確認**：用表格呈現完整計畫，不分步驟詢問
 11. **自動排除假日**：有行事曆資料時自動排除，不詢問使用者
 12. **ref 不穩定時**：改用 `eval` 直接操作 DOM
-13. **下載 PDF 用 Node.js**：agent-browser pdf 命令不支援 A4 格式，需用 Playwright 腳本
+13. **下載 PDF 需正常流程**：必須透過選擇計畫 → 列印按鈕 → 選擇年月的流程，直接用 URL 會失敗
 14. **完成後關閉瀏覽器**：任務完成後執行 `agent-browser close` 釋放資源
 
 ---
 
 ## 系統資訊
 
-| 頁面 | URL |
-|------|-----|
-| 登入頁面 | https://gaweb.nutn.edu.tw/workhour/Home/Login |
-| 計畫選擇 | https://gaweb.nutn.edu.tw/workhour/Budget |
-| 新增工時 | https://gaweb.nutn.edu.tw/workhour/Hours/Create |
-| 報表年月選擇 | https://gaweb.nutn.edu.tw/workhour/Hours/Report2 |
-| 報表頁面 | https://gaweb.nutn.edu.tw/workhour/Hours/SetYM?WorkYear={西元年}&WorkMonth={月} |
+| 頁面 | URL | 備註 |
+|------|-----|------|
+| 登入頁面 | https://gaweb.nutn.edu.tw/workhour/Home/Login | |
+| 計畫選擇 | https://gaweb.nutn.edu.tw/workhour/Budget | 登入後首頁 |
+| 新增工時 | https://gaweb.nutn.edu.tw/workhour/Hours/Create | 選擇計畫後進入 |
+| 報表年月選擇 | https://gaweb.nutn.edu.tw/workhour/Hours/Report2 | 點擊「列印工時紀錄表」後進入 |
+| 報表頁面 | https://gaweb.nutn.edu.tw/workhour/Hours/Report | 選擇年月後進入，**需 session 狀態** |
+
+**重要**：報表頁面 `/Hours/Report` 必須透過正常流程進入，直接用 URL 會顯示計畫選擇頁。
 
 ---
 

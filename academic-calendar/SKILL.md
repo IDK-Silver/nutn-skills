@@ -65,7 +65,16 @@ function getCurrentAcademicYear() {
 
 ### 步驟 3：取得完整 PDF 內容
 
-使用 `web_fetch` 並設定 `web_fetch_pdf_extract_text=true`：
+**Claude Code 環境**：下載 PDF 到本地後用 `Read` 工具讀取：
+
+```bash
+# 下載 PDF
+curl -s -o /tmp/nutn_calendar.pdf "https://academic.nutn.edu.tw/upload/cht/152/{file_id}_file_1.pdf"
+```
+
+然後使用 Read 工具讀取 `/tmp/nutn_calendar.pdf`，Claude Code 可直接解析 PDF 內容。
+
+**其他環境**：使用 `web_fetch` 並設定 `web_fetch_pdf_extract_text=true`：
 
 ```
 web_fetch(pdf_url, web_fetch_pdf_extract_text=true)
