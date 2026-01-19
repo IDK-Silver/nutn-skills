@@ -19,7 +19,7 @@
 
 | 欄位 | 值 |
 |------|-----|
-| 路徑 | `./agent-browser/SKILL.md` |
+| 路徑 | `./skills/agent-browser/SKILL.md` |
 | 說明 | 瀏覽器自動化工具，支援網頁操作、表單填寫、截圖等 |
 | 觸發關鍵字 | agent-browser, 瀏覽器自動化, browser automation, 網頁操作 |
 
@@ -31,7 +31,7 @@
 
 | 欄位 | 值 |
 |------|-----|
-| 路徑 | `./workhour/SKILL.md` |
+| 路徑 | `./skills/workhour/SKILL.md` |
 | 說明 | 南大工時系統自動化填寫 |
 | 觸發關鍵字 | 工時, workhour, 填工時, work hours, 南大工時, NUTN 工時系統 |
 
@@ -45,7 +45,7 @@
 
 | 欄位 | 值 |
 |------|-----|
-| 路徑 | `./academic-calendar/SKILL.md` |
+| 路徑 | `./skills/academic-calendar/SKILL.md` |
 | 說明 | 取得並提供南大學校行事曆完整內容 |
 | 觸發關鍵字 | 行事曆, 學校行事曆, 放假日, 假日, 校曆, academic calendar, holidays, 開學, 考試週 |
 
@@ -57,13 +57,13 @@
 
 | 欄位 | 值 |
 |------|-----|
-| 路徑 | `./csie-website/INDEX.md` |
+| 路徑 | `./skills/csie-website/INDEX.md` |
 | 說明 | 資工系網站管理與更新（含多個子技能） |
 | 觸發關鍵字 | 系網, 系網站, csie website, 專題演講, seminar, 演講更新, 學期更新 |
 
 **載入時機**：使用者需要更新或管理資工系網站內容。
 
-**子技能**：先閱讀 `./csie-website/INDEX.md` 以決定要載入哪個子技能。
+**子技能**：先閱讀 `./skills/csie-website/INDEX.md` 以決定要載入哪個子技能。
 
 ---
 
@@ -71,7 +71,7 @@
 
 | 欄位 | 值 |
 |------|-----|
-| 路徑 | `./skill-creator/SKILL.md` |
+| 路徑 | `./skills/skill-creator/SKILL.md` |
 | 說明 | 用於建立結構完善、易於維護的技能的元技能 |
 | 觸發關鍵字 | 建立 skill, 新增 skill, create skill, new skill, skill 範本, skill template |
 
@@ -83,7 +83,7 @@
 
 | 欄位 | 值 |
 |------|-----|
-| 路徑 | `./cloud-setup/SKILL.md` |
+| 路徑 | `./skills/cloud-setup/SKILL.md` |
 | 說明 | 雲端環境檢測與設定，自動安裝 agent-browser |
 | 觸發關鍵字 | 環境設定, cloud setup, 雲端環境, 安裝 agent-browser, 環境檢測 |
 
@@ -100,7 +100,7 @@
 
 | 欄位 | 值 |
 |------|-----|
-| 路徑 | `./skill-name/SKILL.md` |
+| 路徑 | `./skills/skill-name/SKILL.md` |
 | 說明 | 簡短說明 |
 | 觸發關鍵字 | keyword1, keyword2, 關鍵字1, 關鍵字2 |
 

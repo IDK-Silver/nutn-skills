@@ -9,7 +9,7 @@ npm install -g agent-browser
 agent-browser install  # 下載 Chromium
 ```
 
-若未安裝，請先閱讀 `./cloud-setup/SKILL.md` 進行環境設定。
+若未安裝，請先閱讀 `./skills/cloud-setup/SKILL.md` 進行環境設定。
 
 ---
 

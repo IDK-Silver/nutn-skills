@@ -18,7 +18,7 @@
 which agent-browser 2>/dev/null || echo "NOT_INSTALLED"
 ```
 
-- 若輸出 `NOT_INSTALLED`：閱讀 `./cloud-setup/SKILL.md` 並執行安裝流程
+- 若輸出 `NOT_INSTALLED`：閱讀 `./skills/cloud-setup/SKILL.md` 並執行安裝流程
 - 若已安裝：繼續執行任務
 
 **環境類型判斷**：
