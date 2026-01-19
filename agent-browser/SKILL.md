@@ -9,9 +9,31 @@ npm install -g agent-browser
 agent-browser install  # 下載 Chromium
 ```
 
+若未安裝，請先閱讀 `./cloud-setup/SKILL.md` 進行環境設定。
+
 ---
 
 ## 執行環境
+
+### 環境類型判斷
+
+執行以下指令判斷環境類型：
+
+```bash
+[ -f ~/.nvm/nvm.sh ] && echo "LOCAL" || echo "CLOUD"
+```
+
+### 雲端環境（Claude Code Cloud）
+
+在雲端環境中，**直接執行**即可，不需要 zsh 或 source：
+
+```bash
+agent-browser open https://example.com --headed
+agent-browser snapshot -i
+agent-browser close
+```
+
+### 本地環境（使用 nvm/zsh）
 
 **重要**：agent-browser 透過 nvm 安裝，必須使用 Desktop Commander 的 `start_process` 搭配 zsh shell 來載入環境：
 
@@ -22,20 +44,27 @@ Desktop Commander:start_process
   timeout_ms: 15000
 ```
 
-**所有 agent-browser 命令都必須：**
+**本地環境所有 agent-browser 命令都必須：**
 1. 加上 `source ~/.zshrc 2>/dev/null;` 前綴
 2. 指定 `shell: /bin/zsh`
-
-**錯誤寫法**（會找不到 agent-browser）：
-```
-Desktop Commander:start_process
-  command: agent-browser open https://example.com --headed
-  timeout_ms: 15000
-```
 
 ---
 
 ## 核心工作流程
+
+根據環境類型選擇正確的執行方式：
+
+### 雲端環境
+
+```bash
+agent-browser open <url>        # 1. 導航到頁面
+agent-browser snapshot -i       # 2. 取得互動元素與 ref
+agent-browser click @e1         # 3. 使用 ref 操作元素
+agent-browser fill @e2 "text"   # 4. 填寫表單
+agent-browser close             # 5. 關閉瀏覽器
+```
+
+### 本地環境
 
 ```bash
 source ~/.zshrc 2>/dev/null; agent-browser open <url>        # 1. 導航到頁面
