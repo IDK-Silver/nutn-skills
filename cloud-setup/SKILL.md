@@ -42,12 +42,15 @@ echo "環境類型: $([ -f ~/.nvm/nvm.sh ] && echo '本地 (nvm)' || echo '雲�
 # 1. 安裝 agent-browser
 npm install -g agent-browser
 
-# 2. 安裝 Chromium（這會下載瀏覽器）
-agent-browser install
+# 2. 安裝相容版本的 Playwright 和 Chromium
+npm install -g playwright@1.57.0
+npx playwright install chromium
 
 # 3. 驗證安裝
 agent-browser --version
 ```
+
+**重要**：`agent-browser install` 可能安裝版本不相容的瀏覽器。建議直接使用上述 `npx playwright install chromium` 來確保版本匹配。
 
 ### 本地環境（使用 nvm/zsh）
 
@@ -98,13 +101,21 @@ which agent-browser
 ### 步驟 3：安裝（若未安裝）
 
 ```bash
-npm install -g agent-browser && agent-browser install
+npm install -g agent-browser
+npm install -g playwright@1.57.0
+npx playwright install chromium
 ```
 
 ### 步驟 4：驗證
 
 ```bash
 agent-browser --version
+```
+
+### 步驟 5：測試（可選）
+
+```bash
+agent-browser open "data:text/html,<h1>Test</h1>" && agent-browser snapshot -i && agent-browser close
 ```
 
 ---
@@ -140,8 +151,9 @@ else
     echo "⚠️  agent-browser 未安裝，開始安裝..."
     npm install -g agent-browser
     if [ $? -eq 0 ]; then
-        echo "📦 安裝 Chromium..."
-        agent-browser install
+        echo "📦 安裝 Playwright 和 Chromium..."
+        npm install -g playwright@1.57.0
+        npx playwright install chromium
         echo "✅ agent-browser 安裝完成"
     else
         echo "❌ 安裝失敗"
@@ -176,12 +188,26 @@ which agent-browser
 
 若未安裝，執行：
 ```bash
-npm install -g agent-browser && agent-browser install
+npm install -g agent-browser
+npm install -g playwright@1.57.0
+npx playwright install chromium
+```
+
+### Q: 出現「Executable doesn't exist」錯誤？
+
+這通常是 Playwright 瀏覽器版本不匹配。執行以下指令重新安裝正確版本：
+```bash
+npm install -g playwright@1.57.0
+npx playwright install chromium
 ```
 
 ### Q: 需要每次新對話都重新安裝嗎？
 
 不需要。雲端環境的全域安裝會保留。使用檢測指令確認狀態即可。
+
+### Q: 網路連線失敗（ERR_TUNNEL_CONNECTION_FAILED）？
+
+這是雲端環境的網路限制，某些外部網站可能無法存取。可用 `data:text/html,...` 格式測試本地 HTML 確認瀏覽器正常運作。
 
 ---
 
