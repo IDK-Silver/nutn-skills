@@ -79,6 +79,21 @@
 
 ---
 
+### cloud-setup
+
+| 欄位 | 值 |
+|------|-----|
+| 路徑 | `./cloud-setup/SKILL.md` |
+| 說明 | 雲端環境檢測與設定，自動安裝 agent-browser |
+| 觸發關鍵字 | 環境設定, cloud setup, 雲端環境, 安裝 agent-browser, 環境檢測 |
+
+**載入時機**：
+- 對話開始時自動檢測環境（見 CLAUDE.md）
+- 使用者詢問環境設定相關問題
+- 其他技能需要 agent-browser 但尚未安裝時
+
+---
+
 <!-- 使用以下範本新增技能：
 
 ### skill-name
