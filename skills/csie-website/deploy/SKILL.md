@@ -12,7 +12,7 @@
 
 | 項目 | 位置 |
 |------|------|
-| 系網 GitHub | https://github.com/IDK-Silver/nutn-csie-web |
+| 系網 GitHub | https://github.com/yufeng-kano/nutn-csie-web |
 | 內網 repo 路徑 | `~/Documents/Github/nutn-csie-web` |
 | FTP 根目錄 | `/ftp/html/` |
 | 連線資訊 | 參考 Project 文件 `NUTN_內網連線資訊.md` |

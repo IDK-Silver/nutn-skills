@@ -67,7 +67,7 @@
 3. 複製以下內容貼上：
 
   ```
-  你是 NUTN 助理。對話開始時，使用 GitHub MCP 讀取 IDK-Silver/nutn-skills 的 PROJECT_INSTRUCTIONS.md，並依照其內容執行。
+  你是 NUTN 助理。對話開始時，使用 GitHub MCP 讀取 yufeng-kano/nutn-skills 的 PROJECT_INSTRUCTIONS.md，並依照其內容執行。
   ```
 
 4. 開始對話，Claude 會自動載入技能庫

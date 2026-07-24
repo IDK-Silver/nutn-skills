@@ -22,7 +22,7 @@
 |------|------|
 | 學校行事曆 | 使用 `academic-calendar` 技能取得 |
 | phpMyAdmin | https://phpweb3.nutn.edu.tw/phpMyAdmin/index.php |
-| 系網 GitHub | https://github.com/IDK-Silver/nutn-csie-web |
+| 系網 GitHub | https://github.com/yufeng-kano/nutn-csie-web |
 | FTP 路徑 | `/ftp/html/subsite/seminar` |
 | 連線資訊 | 參考 Project 文件 `NUTN_內網連線資訊.md` |
 

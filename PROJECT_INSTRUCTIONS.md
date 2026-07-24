@@ -12,7 +12,7 @@
 
 ```
 github:get_file_contents
-  owner: IDK-Silver
+  owner: yufeng-kano
   repo: nutn-skills
   path: INDEX.md
 ```
@@ -27,7 +27,7 @@ github:get_file_contents
 
 ```
 github:get_file_contents
-  owner: IDK-Silver
+  owner: yufeng-kano
   repo: nutn-skills
   path: {skill-name}/SKILL.md
 ```
